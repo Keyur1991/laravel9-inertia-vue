@@ -16,4 +16,4 @@ npm install
 ##
 npm run dev
 
-In new tab run this command: php artisan serve
+In new tab run this command: php artisan serve and open its url in browser window
