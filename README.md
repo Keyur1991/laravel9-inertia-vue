@@ -35,8 +35,8 @@
 </p>
 
 ## Installation
-<p>Step 1: Run composer to install dependecies for laravel</p>
-<code>composer install</code>
+<p>Step 1: Run <code>composer install</code> for laravel dependencies</p>
+
 
 <p>Step 2: Run npm to install node packages</p>
 ```sh
