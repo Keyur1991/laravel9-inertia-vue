@@ -32,7 +32,7 @@
                         hover:bg-white
                         focus:border-indigo-500 focus:text-indigo-500
                     "
-                    :class="{ 'bg-white': link.active }"
+                    :class="{ 'border-sky-700': link.active }"
                     :href="link.url"
                     v-html="link.label"
                 />

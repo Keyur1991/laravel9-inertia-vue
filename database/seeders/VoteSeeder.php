@@ -4,8 +4,9 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Vote;
 
-class ProductsSeeder extends Seeder
+class VoteSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,6 +15,6 @@ class ProductsSeeder extends Seeder
      */
     public function run()
     {
-        \App\Models\Product::factory(50)->create();
+        Vote::factory(50)->create();
     }
 }

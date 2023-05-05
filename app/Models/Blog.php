@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Product extends Model
+class Blog extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -17,8 +17,11 @@ class Product extends Model
      */
     protected $fillable = [
         'name',
-        'category',
-        'description',
-        'image'
+        'description'
     ];
+
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
 }

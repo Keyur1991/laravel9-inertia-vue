@@ -1,5 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import PopularPosts from './Blog/PopularPosts.vue';
 import { Head } from '@inertiajs/vue3';
 </script>
 
@@ -14,7 +15,10 @@ import { Head } from '@inertiajs/vue3';
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900">You're logged in!</div>
+                    <div class="p-6">
+                        <p class="text-lg text-black font-semibold"><h3>Popular Posts</h3></p>
+                        <PopularPosts :blog="null" :limit="30"/>
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,3 +1,4 @@
+
 <script setup>
 import { onMounted, ref } from 'vue';
 
@@ -17,10 +18,10 @@ defineExpose({ focus: () => input.value.focus() });
 </script>
 
 <template>
-    <input
+    <textarea
         class="border-gray-300 focus:border-sky-500 focus:ring-sky-500 rounded-md shadow-sm"
         :value="modelValue"
         @input="$emit('update:modelValue', $event.target.value)"
         ref="input"
-    />
+    ></textarea>
 </template>

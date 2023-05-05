@@ -1,18 +1,32 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import Pagination from '@/Components/Pagination.vue';
 import TextInput from '@/Components/TextInput.vue';
+import FlashMessage from '@/Components/FlashMessage.vue';
+import SortColumn from '@/Components/SortColumn.vue';
 
 const props = defineProps({
-    products: {
+    blog: {
+        type: Object,
+        default: () => ({})
+    },
+    posts: {
         type: Object,
         default: () => ({})
     },
     search: {
         type: String,
         default: ''
+    },
+    sortBy: {
+        type: String,
+        default: 'created_at'
+    },
+    sortDir: {
+        type: String,
+        default: 'desc'
     }
 })
 
@@ -21,40 +35,54 @@ const form = useForm({
 })
 
 const destroy = (id) => {
-    const result = confirm("Are you sure you want to delete the product ?")
+    const result = confirm("Are you sure you want to delete the post ?")
     if (result == true) {
-        form.delete(route('products.destroy', id))
+        form.delete(route('blog.post.destroy', [props.blog.id, id]))
     }
+    return false
 }
 
-const searchProducts = () => {
-    form.get(route('products.listing') + '?term=' + form.term + '&page=1')
+const searchPosts = () => {
+    form.get(route('blog.post.index', props.blog.id) + '?term=' + form.term + '&page=1&sort_by='+$page.props.sortBy+'&sort_dir='+$page.props.sortDir)
+}
+
+const $page = usePage()
+const sortPosts = (sort_by, sort_dir) => {
+    $page.props.sortBy = sort_by
+    $page.props.sortDir = sort_dir
+    searchPosts()
 }
 </script>
 
 <template>
-    <Head title="Products" />
+    <Head title="Posts" />
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Products</h2>
+            <div class="flex items-center">
+                <div class="font-semibold text-xl text-gray-800 leading-tight">
+                    <Link :href="route('blog.show', blog.id)"><strong><span class="mdil mdil-arrow-left-circle text-3xl"></span></strong></Link>
+                </div>
+                <p class="font-semibold text-xl text-gray-800 leading-tight">Posts: {{ blog.name }}</p>
+            </div>
         </template>
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white shadow-sm sm:rounded-lg">
-                    <div class="flex items-center justify-end mt-4">
-                        <div class="mr-5">
+                    <div class="flex items-center justify-between mt-4 p-6">
+                        <div class="w-2/4 mr-5">
                             <TextInput 
+                                type="text"
                                 v-model="form.term"
-                                @keyup.enter="searchProducts"
-                                placeholder="Search Products..."
+                                @keyup.enter="searchPosts"
+                                placeholder="Search Posts..."
                                 class="mt-1 block w-full"
                             />
                         </div>
-                        <Link :href="route('products.create')">
-                            <PrimaryButton type="button" class="mr-4 mt-4" >
-                                Add Product
+                        <Link :href="route('blog.post.create', blog.id)">
+                            <PrimaryButton type="button" >
+                                Add Post
                             </PrimaryButton>
                         </Link>
                     </div>
@@ -63,31 +91,22 @@ const searchProducts = () => {
                 <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                     
                     <div class="p-6 bg-white border-b border-gray-200">
-                        <div
-                            v-if="$page.props.flash.message"
-                            class="p-4 mb-4 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800"
-                            role="alert"
-                        >
-                            <span class="font-medium">
-                                {{ $page.props.flash.message }}
-                            </span>
-                        </div>
+                        <FlashMessage />
                          <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                             <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                     <tr>
                                         <th scope="col" class="px-6 py-3">#</th>
                                         <th scope="col" class="px-6 py-3">
-                                            Image
+                                            Title&nbsp;
+                                            <SortColumn column="title" :sort-by="sortBy" :sort-dir="sortDir" @sort="sortPosts" />
                                         </th>
                                         <th scope="col" class="px-6 py-3">
-                                            Name
+                                            Content
                                         </th>
                                         <th scope="col" class="px-6 py-3">
-                                            Category
-                                        </th>
-                                        <th scope="col" class="px-6 py-3">
-                                            Description
+                                            Created&nbsp;
+                                            <SortColumn column="created_at" :sort-by="sortBy" :sort-dir="sortDir" @sort="sortPosts" />
                                         </th>
                                         <th scope="col" class="px-6 py-3">
                                             Actions
@@ -96,24 +115,21 @@ const searchProducts = () => {
                                 </thead>
                                 <tbody>
                                     <tr
-                                        v-for="(product, index) in products.data"
+                                        v-for="(post, index) in posts.data"
                                         :key="index"
-                                        class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                                        class="odd:bg-white even:bg-slate-50"
                                     >
                                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
                                             {{ index + 1 }}
                                         </th>
-                                        <td class="px-6 py-4">
-                                            <img v-if="product.image != ''" :src="`/storage/${product.image}`" width="80" />
-                                        </td>
                                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
-                                            {{ product.name }}
+                                           <Link :href="route('blog.post.show', [blog.id, post.id])"> {{ $filters.truncate(post.title || '', 40) }} </Link>
                                         </th>
                                         <td class="px-6 py-4">
-                                            {{ product.category }}
+                                            {{ $filters.truncate(post.content || '', 40) }}
                                         </td>
                                         <td class="px-6 py-4">
-                                            {{ product.description }}
+                                            {{ $filters.localtime(post.created_at, "DD/MM/YYYY HH:mm") }}
                                         </td>
 
 
@@ -122,21 +138,20 @@ const searchProducts = () => {
                                             <Link
                                                 :href="
                                                     route(
-                                                        'products.edit',
-                                                        product.id
+                                                        'blog.post.edit',
+                                                        [blog.id, post.id]
                                                     )
                                                 "
-                                               class="px-4 py-2 text-white bg-blue-600 rounded-lg" >Edit</Link
-                                            >
+                                               class="px-3 py-2 text-sky-500 hover:text-white hover:bg-sky-500 outline outline-1 rounded-lg" ><span class="mdil mdil-pencil"></span></Link>
 
-                                            <Link href="#" @click="destroy(product.id)" class="ml-2 px-4 py-2 text-white bg-red-600 rounded-lg">Delete</Link>
+                                            <Link href="javascript:;" @click="destroy(post.id)" class="ml-2 px-3 py-2 text-red-500 hover:text-white hover:bg-red-500 outline outline-1 rounded-md"><span class="mdil mdil-delete"></span></Link>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                         <div class="mt-4">
-                            <Pagination :links="products.links" />
+                            <Pagination :links="posts.links" />
                         </div>
                     </div>
                 </div>

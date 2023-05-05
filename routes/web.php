@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\BlogController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\VoteController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -35,13 +38,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::group(['prefix' => 'products', 'middleware' => ['auth']], function() {
-    Route::get('/', [App\Http\Controllers\Products\ListingController::class, 'index'])->name('products.listing');
-    Route::get('/create', [App\Http\Controllers\Products\CreateController::class, 'create'])->name('products.create');
-    Route::post('/', [App\Http\Controllers\Products\CreateController::class, 'store'])->name('products.store');
-    Route::get('/{id}', [App\Http\Controllers\Products\EditController::class, 'edit'])->name('products.edit');
-    Route::put('/{id}', [App\Http\Controllers\Products\EditController::class, 'update'])->name('products.update');
-    Route::delete('/{id}', [App\Http\Controllers\Products\DeleteController::class, 'destroy'])->name('products.destroy');
+Route::group(['middleware' => ['auth']], function() {
+    Route::get('/blog/popular-posts/{id?}', [PostController::class, 'popular'])->name('blog.post.popular');
+    
+    Route::resource('blog', BlogController::class);
+    Route::resource('blog.post', PostController::class);
+    Route::resource('blog.post.vote', VoteController::class);
 });
 
 require __DIR__.'/auth.php';
