@@ -42,7 +42,7 @@
 <p>Step 5: Update below database configuration in <strong>.env</strong> as per your local setup:</p>
 <p>
     <ul>
-        <li>DB_HOST=<li>
+        <li>DB_HOST=</li>
         <li>DB_PORT=</li>
         <li>DB_DATABASE=</li>
         <li>DB_USERNAME=</li>
