@@ -52,8 +52,8 @@
 <p>Step 5: Run below php artisan commands for database migrations & seeding.</p>
 <p>
     <ul>
-        <li>php artisan migrate</li>
-        <li>php artisan db:seed (optional)</li>
+        <li><code>php artisan migrate</code></li>
+        <li><code>php artisan db:seed</code> (optional)</li>
     </ul>
 </p>
 <p>Step 6: Run <code>php artisan serve</code> command</p>
